@@ -8,6 +8,7 @@ grounded answers, guardrails, human approval, observability and tests.
 | [**Rayda Fleet Copilot**](https://github.com/agentic-ai-rakesh/rayda-fleet-copilot) | Natural-language copilot for IT device-fleet telemetry: grounded Q&A, trend insights, human-approved actions | LangGraph agent loop with an approval interrupt · SQLite · Claude / GPT / Gemini switch | 226 tests · 54/54 evals |
 | [**Agentic RAG Pipeline Analyzer**](https://github.com/agentic-ai-rakesh/agentic-rag-pipeline-analyzer) | Build a RAG pipeline step by step and chat with your documents, with citations | LangGraph orchestrator, RAG, ingestion and fallback agents · LiteLLM auto routing · FAISS · FastAPI + Streamlit | 97 tests |
 | [**News Research Agent**](https://github.com/agentic-ai-rakesh/news-research-agent) | Index news article URLs and ask questions; answers cite the articles | LangGraph research agent (plan → search tools → cited answer) · FAISS · OpenAI GPT-5.5 · FastAPI + Streamlit | 37 tests |
+| [**AtliQ Tees SQL Agent**](https://github.com/agentic-ai-rakesh/atliq-tees-sql-agent) | Ask a t-shirt store's database questions in plain English; answers show the SQL and rows | LangGraph SQL agent (schema → read-only SQL → self-correction) · sqlglot guard · SQLite/MySQL · Gemini/OpenAI · FastAPI + Streamlit | 58 tests |
 | [**Smart Interview**](https://github.com/agentic-ai-rakesh/smart-interview) | Interview-practice app: topic-aware questions and answers, ask anything, quick topic cards | LangGraph agent with auto model selection · OpenRouter · MongoDB · FastAPI + Streamlit | 87 tests |
 
 ---
@@ -67,6 +68,25 @@ citations.
   model, no pickle.
 - Every answer shows its agent steps, tokens, latency and model; optional LangSmith tracing.
 - **Tech:** Python 3.11 · LangGraph · LangChain · OpenAI · FAISS · BeautifulSoup · FastAPI ·
+  Streamlit · pytest · `make setup`
+
+## 👕 AtliQ Tees SQL Agent
+
+Store managers ask about inventory, prices and discounts; the agent queries the database and
+shows its work.
+
+**Flow**
+- Question → 🤖 agent → `list_tables` / `describe_table` (exact values) → `run_sql`
+- SQL error → the agent reads it and fixes the query → answer from the rows
+- Write requests ("delete …") are refused: the database is read-only
+
+**Highlights**
+- Two safety layers: a sqlglot guard (one SELECT, known tables, no writes/PRAGMA/SLEEP) and a
+  read-only connection with a time limit and row cap.
+- Every answer shows its SQL and result rows; numbers not found in the results are flagged.
+- Deterministic data (`make db`, SQLite by default, same data as a MySQL script); tests compute
+  expected values in Python.
+- **Tech:** Python 3.11 · LangGraph · LangChain · SQLAlchemy · sqlglot · Gemini / OpenAI · FastAPI ·
   Streamlit · pytest · `make setup`
 
 ## 🎯 Smart Interview

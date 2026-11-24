@@ -7,6 +7,7 @@ grounded answers, guardrails, human approval, observability and tests.
 |---|---|---|---|
 | [**Rayda Fleet Copilot**](https://github.com/agentic-ai-rakesh/rayda-fleet-copilot) | Natural-language copilot for IT device-fleet telemetry: grounded Q&A, trend insights, human-approved actions | LangGraph agent loop with an approval interrupt · SQLite · Claude / GPT / Gemini switch | 226 tests · 54/54 evals |
 | [**Agentic RAG Pipeline Analyzer**](https://github.com/agentic-ai-rakesh/agentic-rag-pipeline-analyzer) | Build a RAG pipeline step by step and chat with your documents, with citations | LangGraph orchestrator, RAG, ingestion and fallback agents · LiteLLM auto routing · FAISS · FastAPI + Streamlit | 97 tests |
+| [**News Research Agent**](https://github.com/agentic-ai-rakesh/news-research-agent) | Index news article URLs and ask questions; answers cite the articles | LangGraph research agent (plan → search tools → cited answer) · FAISS · OpenAI GPT-5.5 · FastAPI + Streamlit | 37 tests |
 | [**Smart Interview**](https://github.com/agentic-ai-rakesh/smart-interview) | Interview-practice app: topic-aware questions and answers, ask anything, quick topic cards | LangGraph agent with auto model selection · OpenRouter · MongoDB · FastAPI + Streamlit | 87 tests |
 
 ---
@@ -48,6 +49,25 @@ retrieve, cite and recover.
 - Observability: LangSmith traces, the Pipeline Watch dashboard, time per step and per agent,
   tokens and cost.
 - **Tech:** Python · LangGraph · LangChain · LiteLLM · FAISS · FastAPI · Streamlit · MongoDB · LangSmith
+
+## 📰 News Research Agent (RockyBot)
+
+Paste news URLs and ask questions; a research agent searches the articles and answers with
+citations.
+
+**Flow**
+- URLs → fetch + extract article text → chunk (1000 / 200 overlap) → OpenAI embeddings → FAISS
+- Question → 🤖 agent plans → `list_articles` / `search_articles` (up to 4 rounds) → answer with `[A#]`
+- Not in the articles → says so, no guessing
+
+**Highlights**
+- Explicit LangGraph loop (agent ⇄ tools → finalize), one search per part of a comparison,
+  capped rounds so it always ends.
+- Per-URL failure reporting, atomic index rebuild, manifest that rejects a mismatched embedding
+  model, no pickle.
+- Every answer shows its agent steps, tokens, latency and model; optional LangSmith tracing.
+- **Tech:** Python 3.11 · LangGraph · LangChain · OpenAI · FAISS · BeautifulSoup · FastAPI ·
+  Streamlit · pytest · `make setup`
 
 ## 🎯 Smart Interview
 
